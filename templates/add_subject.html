@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Add Subject{% endblock %}
+{% block content %}
+<div class="dashboard-container">
+    <a href="/subjects" class="back-btn mb-2">Back</a>
+    <h2>Add Subject</h2>
+    <form method="POST">
+        <input type="text" name="name" placeholder="Subject Name" required>
+        <button type="submit" class="btn btn-success">Add Subject</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Add Marks{% endblock %}
+{% block content %}
+<div class="dashboard-container">
+    <a href="/marks" class="back-btn mb-2">Back</a>
+    <h2>Add Marks</h2>
+    <form method="POST">
+        <div class="mb-3">
+            <label>Student:</label>
+            <select name="student_id" class="form-select" required>
+                <option value="">Select Student</option>
+                {% for student in students %}
+                <option value="{{ student.id }}">{{ student.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% for subject in subjects %}
+        <div class="mb-3">
+            <label>{{ subject.name }}:</label>
+            <input type="number" name="marks_{{ subject.id }}" class="form-control" min="0" max="100" required>
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-success">Add Marks</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Marks{% endblock %}
+{% block content %}
+<div class="dashboard-container">
+    <a href="/dashboard" class="back-btn mb-2">Back</a>
+    <h2>Marks</h2>
+    <a href="/add_marks" class="btn btn-success mb-3">Add Marks</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th><th>Student</th><th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mark in marks %}
+            <tr>
+                <td>{{ mark.id }}</td>
+                <td>{{ mark.student_name }}</td>
+                <td>
+                    <a href="/student_marks/{{ mark.student_id }}" class="btn btn-primary btn-sm">View</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
