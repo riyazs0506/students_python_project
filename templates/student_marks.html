@@ -1,19 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="dashboard-container">
-  <div class="dashboard-header">
-    <h2>Marks for {{ student.name }}</h2>
-    <a href="{{ url_for('students_list') }}" class="back-btn">Back</a>
-  </div>
-
-  <table>
+<div class="card card-modern p-3">
+  <h5>Marks for {{ student.name }}</h5>
+  <table class="table">
     <thead><tr><th>Subject</th><th>Marks</th></tr></thead>
     <tbody>
       {% for m in marks %}
-      <tr>
-        <td>{{ m.subject_name }}</td>
-        <td>{{ m.marks }}</td>
-      </tr>
+        <tr><td>{{ m.subject_name }}</td><td>{{ m.marks }}</td></tr>
+      {% else %}
+        <tr><td colspan="2" class="small-muted">No marks.</td></tr>
       {% endfor %}
     </tbody>
   </table>

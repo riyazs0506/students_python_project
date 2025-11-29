@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Exams{% endblock %}
+{% block content %}
+<div class="mb-3 d-flex justify-content-between">
+  <a class="back-btn" href="{{ url_for('principal_dashboard') }}">Back</a>
+  {% if session.get('role') == 'Principal' %}
+    <a class="btn btn-success" href="{{ url_for('create_exam') }}">Create Exam</a>
+  {% endif %}
+</div>
+
+<div class="card p-2 shadow-sm">
+  <table class="table mb-0">
+    <thead><tr><th>Name</th><th>Max Marks</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for ex in exams %}
+        <tr>
+          <td>{{ ex.name }}</td>
+          <td>{{ ex.max_marks }}</td>
+          <td>
+            {% if session.get('role')=='Teacher' %}
+              <a class="btn btn-primary btn-sm" href="{{ url_for('exam_enter_marks', exam_id=ex.id) }}">Enter Marks</a>
+            {% else %}
+              <a class="btn btn-warning btn-sm" href="{{ url_for('exam_pending_approval', exam_id=ex.id) }}">Pending</a>
+            {% endif %}
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="3" class="text-muted">No exams.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

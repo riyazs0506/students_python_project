@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Marks Matrix{% endblock %}
+{% block content %}
+<div class="mb-3">
+  <a class="back-btn" href="{{ url_for('principal_dashboard') }}">Back</a>
+</div>
+<h4>Marks Matrix</h4>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Student</th>
+      {% for sub in subjects %}<th>{{ sub.name }}</th>{% endfor %}
+      <th>Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for stu in students %}
+      <tr>
+        <td>{{ stu.name }}</td>
+        {% for sub in subjects %}
+          <td>{{ marks[stu.id][sub.id] if marks[stu.id][sub.id] is not none else '-' }}</td>
+        {% endfor %}
+        <td>{{ totals[stu.id] }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="{{ subjects|length + 2 }}">No students</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

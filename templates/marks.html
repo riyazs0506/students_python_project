@@ -1,22 +1,21 @@
 {% extends "base.html" %}
+{% block title %}Marks{% endblock %}
 {% block content %}
-<div class="dashboard-container">
-  <div class="dashboard-header"><h2>Marks</h2></div>
-  {% if session.get('role') == 'Principal' %}
-    <a href="{{ url_for('add_marks') }}" class="btn-success mb-3">Add Marks</a>
-  {% endif %}
-  <table>
-    <thead><tr><th>ID</th><th>Student</th><th>Subject</th><th>Marks</th></tr></thead>
-    <tbody>
-      {% for m in marks %}
+<div class="mb-3">
+  <a class="back-btn" href="{{ url_for('home') }}">Back</a>
+</div>
+<table class="table">
+  <thead><tr><th>Student</th><th>Subject</th><th>Marks</th></tr></thead>
+  <tbody>
+    {% for m in marks %}
       <tr>
-        <td>{{ m.id }}</td>
-        <td><a href="{{ url_for('student_marks', student_id=m.student_id) }}">{{ m.student_name }}</a></td>
+        <td>{{ m.student_name }}</td>
         <td>{{ m.subject_name }}</td>
         <td>{{ m.marks }}</td>
       </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
+    {% else %}
+      <tr><td colspan="3">No marks found.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
 {% endblock %}

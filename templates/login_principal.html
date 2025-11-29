@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Register Principal{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card card-glass p-4 shadow">
+      <h3 class="mb-3">Principal Login</h3>
+      <form method="post">
+  <label>Email</label>
+  <input type="email" name="email" class="form-control" required>
+
+  <label class="mt-3">Password</label>
+  <input type="password" name="password" class="form-control" required>
+
+  <div class="d-flex justify-content-between mt-4">
+    <a href="{{ url_for('login_choice') }}" class="btn btn-light btn-sm">
+      <i class="bi bi-arrow-left"></i> Back
+    </a>
+    <button class="btn btn-primary">Login</button>
+  </div>
+</form>
+    </div>
+  </div>
+</div>
+{% endblock %}

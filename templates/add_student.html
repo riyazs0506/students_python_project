@@ -1,18 +1,53 @@
 {% extends "base.html" %}
+{% block title %}Add Student{% endblock %}
 {% block content %}
-<div class="auth-card">
-  <h2>Add Student</h2>
-  <form method="POST">
-    <input type="text" name="name" placeholder="Student Name" required>
-    <input type="text" name="grade" placeholder="Grade">
-    <select name="teacher_id">
-      <option value="">Select Teacher</option>
-      {% for t in teachers %}
-        <option value="{{ t.id }}">{{ t.name }}</option>
-      {% endfor %}
-    </select>
-    <button type="submit" class="btn-success">Add Student</button>
-    <a href="{{ url_for('students_list') }}" class="back-btn">Back</a>
+<div class="card p-3 shadow-sm">
+  <div class="d-flex justify-content-between">
+    <h4>Add Student</h4>
+    <a class="back-btn" href="{{ url_for('students_list') }}">Back</a>
+  </div>
+
+  <form method="post" class="mt-3">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Name</label>
+        <input name="name" class="form-control" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Roll No</label>
+        <input name="roll_no" class="form-control">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Class Name</label>
+        <input name="class_name" class="form-control">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Standard</label>
+        <input name="standard" class="form-control">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Section</label>
+        <input name="section" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">DOB</label>
+        <input name="dob" type="date" class="form-control">
+      </div>
+
+      {% if teachers %}
+      <div class="col-md-6">
+        <label class="form-label">Assign Teacher</label>
+        <select name="teacher_id" class="form-select">
+          <option value="">-- Select --</option>
+          {% for t in teachers %}<option value="{{ t.id }}">{{ t.name }}</option>{% endfor %}
+        </select>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="mt-3">
+      <button class="btn btn-success">Save</button>
+    </div>
   </form>
 </div>
 {% endblock %}

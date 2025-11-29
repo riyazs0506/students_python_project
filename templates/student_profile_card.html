@@ -1,0 +1,15 @@
+<div class="card border-0 shadow-sm p-3">
+    <h5 class="fw-bold text-primary mb-3">Student Profile</h5>
+
+    <div class="row">
+        <div class="col-md-6">
+            <p><strong>Name:</strong> {{ student.name }}</p>
+            <p><strong>Roll No:</strong> {{ student.rollno }}</p>
+            <p><strong>Class:</strong> {{ student.grade }}</p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>DOB:</strong> {{ student.dob }}</p>
+            <p><strong>Teacher:</strong> {{ student.teacher_name if student.teacher_name else 'Not Assigned' }}</p>
+        </div>
+    </div>
+</div>

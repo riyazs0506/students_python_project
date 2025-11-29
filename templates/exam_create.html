@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Create Exam{% endblock %}
+{% block content %}
+<div class="card p-3 shadow-sm">
+  <div class="d-flex justify-content-between">
+    <h4>Create Exam</h4>
+    <a class="back-btn" href="{{ url_for('principal_dashboard') }}">Back</a>
+  </div>
+
+  <form method="post" class="mt-3">
+    <label class="form-label">Exam Name</label>
+    <input name="name" class="form-control" required>
+    <label class="form-label mt-3">Max Marks (per subject)</label>
+    <input name="max_marks" type="number" class="form-control" value="100" required>
+
+    <div class="mt-3">
+      <button class="btn btn-success">Create</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Login — Choose Role{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card card-glass p-4 shadow">
+      <h3 class="mb-3">Login As</h3>
+      <div class="d-grid gap-2">
+        <a href="{{ url_for('login_principal') }}" class="btn btn-primary btn-lg">
+  <i class="bi bi-person-workspace me-2"></i>Principal
+</a>
+
+<a href="{{ url_for('login_teacher') }}" class="btn btn-outline-primary btn-lg">
+  <i class="bi bi-person-badge me-2"></i>Teacher
+</a>
+
+<a href="{{ url_for('student_login') }}" class="btn btn-outline-secondary btn-lg">
+  <i class="bi bi-person-circle me-2"></i>Student
+</a>
+      </div>
+      <div class="text-center mt-3">
+  <a href="{{ url_for('register_principal') }}">Register Principal</a>
+</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

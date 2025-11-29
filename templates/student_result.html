@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Student Result{% endblock %}
+{% block content %}
+<div class="card p-3 shadow-sm">
+  <div class="d-flex justify-content-between">
+    <h4>Results for {{ student.name }}</h4>
+    <a class="back-btn" href="{{ url_for('student_dashboard') }}">Back</a>
+  </div>
+
+  {% if exams %}
+    {% for ex in exams %}
+      <div class="card p-3 mb-3 shadow-sm">
+        <h5>{{ ex.exam_name }}</h5>
+
+        <div class="table-responsive">
+          <table class="table">
+            <thead><tr><th>Subject</th><th>Marks</th></tr></thead>
+            <tbody>
+              {% for it in ex['items'] %}
+                <tr>
+                  <td>{{ it.subject }}</td>
+                  <td class="{{ mark_color_class(it.marks) }}">{{ it.marks }} / {{ ex.max_marks }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <p class="mb-1"><strong>Total:</strong> {{ ex.total }} / {{ ex.max_marks * ex['items']|length }}</p>
+        <p><strong>Grade:</strong> {{ grade_from_total(ex.total, ex.max_marks * ex['items']|length) }}</p>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="alert alert-info">No approved results available yet.</div>
+  {% endif %}
+</div>
+{% endblock %}

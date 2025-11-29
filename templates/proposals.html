@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Subject Proposals{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+  <a class="back-btn" href="{{ url_for('principal_dashboard') }}">Back</a>
+</div>
+
+<div class="card p-2 shadow-sm">
+  <table class="table">
+  <thead><tr><th>ID</th><th>Teacher</th><th>Subject</th><th>Status</th><th>Actions</th></tr></thead>
+  <tbody>
+    {% for p in proposals %}
+      <tr>
+        <td>{{ p.id }}</td>
+        <td>{{ p.teacher_name }}</td>
+        <td>{{ p.name }}</td>
+        <td>{{ p.status }}</td>
+        <td>
+          {% if p.status == 'Pending' %}
+            <form method="post" action="{{ url_for('proposal_approve', id=p.id) }}" style="display:inline">
+              <button class="btn btn-sm btn-success">Approve</button>
+            </form>
+            <form method="post" action="{{ url_for('proposal_decline', id=p.id) }}" style="display:inline">
+              <button class="btn btn-sm btn-danger">Decline</button>
+            </form>
+          {% else %}
+            <span class="text-muted">—</span>
+          {% endif %}
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="5" class="text-muted">No proposals.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

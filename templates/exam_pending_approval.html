@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Pending Exam Marks{% endblock %}
+{% block content %}
+<div class="card p-3 shadow-sm">
+  <div class="d-flex justify-content-between">
+    <h4>Pending Marks — {{ exam.name }}</h4>
+    <a class="back-btn" href="{{ url_for('principal_dashboard') }}">Back</a>
+  </div>
+
+  <div class="table-responsive mt-3">
+    <table class="table">
+      <thead><tr><th>Student</th><th>Subject</th><th>Marks</th><th>Teacher</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for m in marks %}
+          <tr>
+            <td>{{ m.student_name }}</td>
+            <td>{{ m.subject_name }}</td>
+            <td>{{ m.marks }}</td>
+            <td>{{ m.teacher_name or '-' }}</td>
+            <td class="d-flex gap-2">
+              <form method="post" action="{{ url_for('exam_approve_mark', mark_id=m.id) }}">
+                <button class="btn btn-sm btn-success">Approve</button>
+              </form>
+              <form method="post" action="{{ url_for('exam_reject_mark', mark_id=m.id) }}">
+                <button class="btn btn-sm btn-danger">Reject</button>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="5" class="text-muted">No pending marks.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

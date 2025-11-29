@@ -1,11 +1,16 @@
 {% extends "base.html" %}
+{% block title %}Welcome — School SMS{% endblock %}
 {% block content %}
-<div class="auth-card">
-  <h1>Welcome to Student Management</h1>
-  <h3>Manage your students easily and securely</h3>
-  <div style="margin-top:20px;">
-    <a href="{{ url_for('login') }}"><button class="btn-primary">Login</button></a>
-    <a href="{{ url_for('register') }}"><button class="btn-success">Register</button></a>
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card card-glass p-4 text-center shadow-lg">
+      <h1 class="mb-2">Welcome to <span class="text-primary">School SMS</span></h1>
+      <p class="lead text-muted">Premium school management — principal, teachers and student results with approval workflow.</p>
+      <div class="d-flex justify-content-center gap-3 mt-4">
+        <a class="btn btn-primary btn-lg" href="{{ url_for('login_choice') }}"><i class="bi bi-box-arrow-in-right me-2"></i>Login / Register</a>
+        <a class="btn btn-outline-secondary btn-lg" href="{{ url_for('student_login') }}"><i class="bi bi-person-badge me-2"></i>Student Login</a>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

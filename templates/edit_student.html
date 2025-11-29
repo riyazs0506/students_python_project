@@ -1,18 +1,50 @@
 {% extends "base.html" %}
+{% block title %}Edit Student{% endblock %}
 {% block content %}
-<div class="auth-card">
-  <h2>Edit Student</h2>
-  <form method="POST">
-    <input type="text" name="name" value="{{ student.name }}" required>
-    <input type="text" name="grade" value="{{ student.grade }}">
-    <select name="teacher_id">
-      <option value="">Select Teacher</option>
-      {% for t in teachers %}
-        <option value="{{ t.id }}" {% if student.teacher_id == t.id %}selected{% endif %}>{{ t.name }}</option>
-      {% endfor %}
-    </select>
-    <button type="submit" class="btn-primary">Update</button>
-    <a href="{{ url_for('students_list') }}" class="back-btn">Back</a>
+<div class="card p-3 shadow-sm">
+  <div class="d-flex justify-content-between">
+    <h4>Edit Student</h4>
+    <a class="back-btn" href="{{ url_for('students_list') }}">Back</a>
+  </div>
+
+  <form method="post" class="mt-3">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Name</label>
+        <input name="name" value="{{ student.name }}" class="form-control" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Roll No</label>
+        <input name="roll_no" value="{{ student.roll_no }}" class="form-control">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Class Name</label>
+        <input name="class_name" value="{{ student.class_name }}" class="form-control">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Standard</label>
+        <input name="standard" value="{{ student.standard }}" class="form-control">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Section</label>
+        <input name="section" value="{{ student.section }}" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">DOB</label>
+        <input name="dob" type="date" value="{{ student.dob }}" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Assign Teacher</label>
+        <select name="teacher_id" class="form-select">
+          <option value="">-- Select --</option>
+          {% for t in teachers %}<option value="{{ t.id }}" {% if t.id==student.teacher_id %}selected{% endif %}>{{ t.name }}</option>{% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="mt-3">
+      <button class="btn btn-success">Update</button>
+    </div>
   </form>
 </div>
 {% endblock %}
