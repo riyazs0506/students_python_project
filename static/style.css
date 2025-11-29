@@ -1,153 +1,264 @@
-/* ============================================================
+/* ------------------------------------------------------------
    PREMIUM LUXURY UI — School SMS
-   Glassmorphism + Modern Professional Dashboard Aesthetic
-===============================================================*/
+   Glassmorphism • Modern SaaS Design • Professional Layout
+-------------------------------------------------------------*/
 
-/* Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
+/* Base */
 body.lux-body {
-    font-family: 'Inter', sans-serif;
-    background: #f1f4f9;
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #f3f6fb;
+    color: #333;
     margin: 0;
     padding: 0;
 }
 
-/* BRAND ICON */
+/* Smooth transition globally */
+* {
+    transition: all 0.15s ease-in-out;
+}
+
+/* ============================================================
+   NAVBAR
+===============================================================*/
+.navbar {
+    background: rgba(255,255,255,0.95) !important;
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(220,220,220,0.45);
+    padding: 14px 0;
+}
+
+.navbar-brand {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.nav-link {
+    font-weight: 500 !important;
+    padding: 8px 14px !important;
+    border-radius: 8px;
+    color: #333 !important;
+}
+
+.nav-link:hover {
+    background: rgba(0,106,255,0.08);
+    color: #006aff !important;
+}
+
+/* Brand bubble */
 .brand-bubble {
-    background: #007bff;
+    background: #004aad;
     color: white;
-    padding: 6px 10px;
-    border-radius: 10px;
-    font-size: 18px;
-}
-
-/* GLOBAL GLASS CARD */
-.card-glass {
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(12px);
+    padding: 7px 11px;
     border-radius: 14px;
-    border: 1px solid rgba(200, 200, 200, 0.3);
+    font-size: 1rem;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.18);
 }
 
-/* Regular Card Enhancements */
-.card {
-    border-radius: 14px !important;
-}
-
-/* SHADOWS */
-.shadow-sm {
-    box-shadow: 0 4px 10px rgba(0,0,0,0.06) !important;
-}
-.shadow {
-    box-shadow: 0 8px 18px rgba(0,0,0,0.10) !important;
-}
-
-/* BUTTONS */
+/* ============================================================
+   BUTTONS
+===============================================================*/
 .btn {
     border-radius: 10px !important;
     padding: 8px 16px !important;
     font-weight: 600 !important;
+    transition: all 0.15s ease-in-out !important;
 }
+
+.btn:active {
+    transform: scale(0.96);
+}
+
 .btn-primary {
-    background: #007bff !important;
-    border-color: #007bff !important;
+    background: #0069ff !important;
+    border-color: #0069ff !important;
 }
 .btn-primary:hover {
-    background: #0056d6 !important;
+    background: #0055d6 !important;
 }
+
 .btn-outline-primary {
-    border-color: #007bff !important;
-    color: #007bff !important;
+    border-color: #0069ff !important;
+    color: #0069ff !important;
 }
 .btn-outline-primary:hover {
-    background: #007bff !important;
+    background: #0069ff !important;
     color: white !important;
 }
-.btn-danger {
-    background: #ff3b3b !important;
-    border-color: #ff3b3b !important;
-}
+
 .btn-success {
     background: #27ae60 !important;
     border-color: #27ae60 !important;
 }
-.btn-warning {
-    background: #f39c12 !important;
-    border-color: #f39c12 !important;
+
+.btn-danger {
+    background: #ff4b4b !important;
+    border-color: #ff4b4b !important;
+}
+.btn-danger:hover {
+    background: #e63c3c !important;
 }
 
-/* BACK BUTTON */
-.back-btn {
-    text-decoration: none;
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-size: 14px;
-    background: #e7ecf3;
-    color: #333;
-    border: 1px solid #ccd4df;
-}
-.back-btn:hover {
-    background: #d8dee8;
+/* Glow hover effect */
+.lux-nav-btn:hover,
+.btn:hover {
+    transform: translateY(-1.5px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
 }
 
-/* TABLES */
-table {
-    border-radius: 12px !important;
-    overflow: hidden !important;
+/* ============================================================
+   CARDS (Glassmorphism)
+===============================================================*/
+.card-glass {
+    background: rgba(255,255,255,0.88) !important;
+    backdrop-filter: blur(18px) !important;
+    border: 1px solid rgba(255,255,255,0.35) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.08) !important;
 }
+
+.shadow-sm {
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08) !important;
+}
+
+/* Dashboard metric cards */
+.dashboard-card {
+    padding: 20px;
+    border-radius: 14px;
+    background: white;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.07);
+    text-align: center;
+}
+.dashboard-card h3 {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+.dashboard-card small {
+    color: #8894a6;
+}
+
+/* ============================================================
+   TABLES (Premium Data Tables)
+===============================================================*/
+.table {
+    border-radius: 14px;
+    overflow: hidden;
+}
+
 .table thead {
-    background: #007bff;
+    background: #0069ff;
     color: white;
 }
-.table tbody tr:hover {
-    background: #eef5ff;
-}
-.table td, .table th {
-    vertical-align: middle;
+
+.table thead th {
+    padding: 14px !important;
+    font-size: 14px;
+    letter-spacing: 0.4px;
 }
 
-/* INPUTS */
-input, select, textarea {
+.table tbody tr {
+    background: rgba(255,255,255,0.65);
+    transition: background 0.2s ease-in-out;
+}
+
+.table tbody tr:hover {
+    background: rgba(0, 89, 255, 0.08) !important;
+}
+
+.table td {
+    padding: 12px !important;
+    border-color: rgba(0,0,0,0.06) !important;
+}
+
+/* ============================================================
+   FORMS
+===============================================================*/
+.form-control {
+    background: #ffffffd9 !important;
+    border: 1px solid rgba(120, 135, 155, 0.25) !important;
     border-radius: 10px !important;
-    border: 1px solid #d0d7e2 !important;
     padding: 10px !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05) !important;
     font-size: 15px !important;
 }
-input:focus, select:focus, textarea:focus {
-    border-color: #007bff !important;
-    box-shadow: 0 0 0 0.15rem rgba(0,123,255,.25) !important;
+
+.form-control:hover {
+    border-color: #006aff !important;
 }
 
-/* FORM LABELS */
+.form-control:focus {
+    border-color: #006aff !important;
+    box-shadow: 0 0 0 3px rgba(0,106,255,0.25) !important;
+}
+
 .form-label {
-    font-weight: 500;
+    font-weight: 600;
+    margin-top: 10px;
 }
 
-/* BADGE COLORS FOR MARKS */
-.low-mark {
-    color: #ff3b3b !important;
+/* ============================================================
+   FLASH ALERTS
+===============================================================*/
+.alert {
+    border-radius: 12px !important;
+    padding: 14px 18px !important;
     font-weight: 600;
+    animation: slideDown 0.25s ease;
 }
-.mid-mark {
-    color: #f39c12 !important;
-    font-weight: 600;
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
-.high-mark {
-    color: #27ae60 !important;
+
+/* ============================================================
+   MARK COLORING
+===============================================================*/
+.low-mark { color: #ff3b3b !important; font-weight: 600; }
+.mid-mark { color: #f39c12 !important; font-weight: 600; }
+.high-mark { color: #27ae60 !important; font-weight: 600; }
+
+/* ============================================================
+   BACK BUTTON
+===============================================================*/
+.back-btn {
+    background: #e4e8f0;
+    color: #333;
+    border-radius: 10px;
+    padding: 7px 14px;
+    text-decoration: none;
+    border: 1px solid #c9d1dc;
     font-weight: 600;
 }
 
-/* FOOTER */
-footer {
-    margin-top: 50px;
+.back-btn:hover {
+    background: #d8dde7;
 }
 
-/* ANIMATIONS */
+/* ============================================================
+   ANIMATIONS
+===============================================================*/
 .fade-in {
-    animation: fadeIn 0.4s ease both;
+    animation: fadeIn 0.35s ease both;
 }
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   RESPONSIVE UPGRADES
+===============================================================*/
+@media (max-width: 768px) {
+    .btn { 
+        font-size: 16px !important; 
+        padding: 10px 16px !important; 
+    }
+    .form-control {
+        font-size: 16px !important;
+    }
+    .navbar-brand small {
+        display: none;
+    }
 }

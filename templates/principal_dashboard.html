@@ -1,14 +1,17 @@
 {% extends "base.html" %}
 {% block title %}Principal Dashboard{% endblock %}
 {% block content %}
-<div class="card-glass p-3 shadow mb-4">
-  <div class="d-flex justify-content-between align-items-center">
-    <h3 class="mb-0">Principal Dashboard</h3>
-    <div>
-      <a class="btn btn-outline-primary me-2" href="{{ url_for('subjects_list') }}">Subjects</a>
-      <a class="btn btn-outline-primary me-2" href="{{ url_for('teachers_list') }}">Teachers</a>
-      <a class="btn btn-primary" href="{{ url_for('students_list') }}">Students</a>
-    </div>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h2 class="mb-0">Principal Dashboard</h2>
+    <p class="text-muted small mb-0">Overview & quick actions</p>
+  </div>
+
+  <div class="d-flex gap-2">
+    <a class="btn btn-outline-primary lux-nav-btn" href="{{ url_for('subjects_list') }}"><i class="bi bi-book"></i> Subjects</a>
+    <a class="btn btn-outline-primary lux-nav-btn" href="{{ url_for('teachers_list') }}"><i class="bi bi-people"></i> Teachers</a>
+    <a class="btn btn-primary lux-nav-btn" href="{{ url_for('students_list') }}"><i class="bi bi-person-lines-fill"></i> Students</a>
   </div>
 </div>
 
@@ -19,55 +22,58 @@
       <h3 class="mt-2">{{ students_count }}</h3>
     </div>
   </div>
+
   <div class="col-md-3">
     <div class="card card-glass p-3 shadow-sm">
       <small class="text-muted">Total Teachers</small>
       <h3 class="mt-2">{{ teachers_count }}</h3>
     </div>
   </div>
+
   <div class="col-md-3">
     <div class="card card-glass p-3 shadow-sm">
       <small class="text-muted">Total Subjects</small>
       <h3 class="mt-2">{{ subjects_count }}</h3>
     </div>
   </div>
+
   <div class="col-md-3">
     <div class="card card-glass p-3 shadow-sm">
-      <small class="text-muted">Pending Marks</small>
+      <small class="text-muted">Pending Exam Marks</small>
       <h3 class="mt-2">{{ pending_marks }}</h3>
     </div>
   </div>
 </div>
 
 <div class="mb-3 d-flex gap-2">
-  <a class="btn btn-success" href="{{ url_for('create_exam') }}">Create Exam</a>
-  <a class="btn btn-warning" href="{{ url_for('proposals_list') }}">View Proposals</a>
-  <a class="btn btn-outline-secondary" href="{{ url_for('home') }}">Back Home</a>
+  <a class="btn btn-success" href="{{ url_for('create_exam') }}"><i class="bi bi-plus-circle"></i> Create Exam</a>
+  <a class="btn btn-warning" href="{{ url_for('proposals_list') }}"><i class="bi bi-chat-right-quote"></i> View Proposals</a>
 </div>
 
 <h5 class="mt-4">Recent Exams</h5>
 <div class="card p-3 shadow-sm">
-  <table class="table mb-0">
-    <thead>
-      <tr>
-        <th>Exam</th>
-        <th>Max Marks</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for ex in recent_exams %}
-        <tr>
-          <td>{{ ex.name }}</td>
-          <td>{{ ex.max_marks }}</td>
-          <td>
-            <a class="btn btn-sm btn-outline-primary" href="{{ url_for('exam_pending_approval', exam_id=ex.id) }}">Pending Marks</a>
-          </td>
-        </tr>
-      {% else %}
-        <tr><td colspan="3" class="text-muted">No exams yet.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="table-responsive">
+    <table class="table mb-0">
+      <thead>
+        <tr><th>Exam</th><th>Max Marks</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for ex in recent_exams %}
+          <tr>
+            <td>{{ ex.name }}</td>
+            <td>{{ ex.max_marks }}</td>
+            <td>
+              <a class="btn btn-sm btn-outline-primary" href="{{ url_for('exam_pending_approval', exam_id=ex.id) }}">
+                <i class="bi bi-clock-history"></i> Pending Marks
+              </a>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="3" class="text-muted">No exams yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
+
 {% endblock %}

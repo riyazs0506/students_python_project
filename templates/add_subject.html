@@ -1,15 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Add Subject{% endblock %}
 {% block content %}
-<div class="card p-3 shadow-sm">
-  <div class="d-flex justify-content-between">
-    <h4>Add Subject</h4>
-    <a class="back-btn" href="{{ url_for('subjects_list') }}">Back</a>
-  </div>
+<div class="card card-glass p-3 shadow-sm">
+  <a class="back-btn" href="{{ url_for('subjects_list') }}">Back</a>
+  <h4 class="mb-3">Add Subject</h4>
 
-  <form method="post" class="mt-3">
+  <form method="post">
     <label class="form-label">Name</label>
     <input name="name" class="form-control" required>
+
     <div class="mt-3">
       <button class="btn btn-success">Save</button>
     </div>

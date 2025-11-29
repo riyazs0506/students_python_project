@@ -1,16 +1,66 @@
 {% extends "base.html" %}
-{% block title %}Welcome — School SMS{% endblock %}
+{% block title %}Welcome — School SMS Premium{% endblock %}
+
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-8">
-    <div class="card card-glass p-4 text-center shadow-lg">
-      <h1 class="mb-2">Welcome to <span class="text-primary">School SMS</span></h1>
-      <p class="lead text-muted">Premium school management — principal, teachers and student results with approval workflow.</p>
-      <div class="d-flex justify-content-center gap-3 mt-4">
-        <a class="btn btn-primary btn-lg" href="{{ url_for('login_choice') }}"><i class="bi bi-box-arrow-in-right me-2"></i>Login / Register</a>
-        <a class="btn btn-outline-secondary btn-lg" href="{{ url_for('student_login') }}"><i class="bi bi-person-badge me-2"></i>Student Login</a>
-      </div>
+<div class="row align-items-center py-5 fade-in">
+
+    <!-- Left Section -->
+    <div class="col-lg-6 mb-4">
+        <h1 class="fw-bold display-5 text-primary mb-3">
+            Manage Your School<br>
+            <span class="text-dark">Effortlessly & Professionally</span>
+        </h1>
+
+        <p class="text-muted fs-5 mb-4">
+            A next-generation School Management System built with
+            a premium design, offering modern dashboards, clean UI,
+            and smooth workflow for Principals, Teachers, and Students.
+        </p>
+
+        <div class="d-flex gap-3">
+            <a href="{{ url_for('login_choice') }}" class="btn btn-primary btn-lg px-4 shadow">
+                <i class="bi bi-box-arrow-in-right me-1"></i> Login
+            </a>
+
+            <a href="{{ url_for('register_principal') }}" class="btn btn-outline-primary btn-lg px-4 shadow-sm">
+                <i class="bi bi-person-plus me-1"></i> Register Principal
+            </a>
+        </div>
     </div>
-  </div>
+
+    <!-- Right Illustration -->
+    <div class="col-lg-6 text-center">
+        <img src="https://cdni.iconscout.com/illustration/premium/thumb/online-learning-platform-4467034-3711080.png"
+             class="img-fluid rounded-4 shadow-sm"
+             style="max-height: 380px; object-fit: cover;">
+    </div>
+
+</div>
+
+<!-- Features Section -->
+<div class="row mt-5 py-5">
+    <div class="col-md-4 mb-4">
+        <div class="card card-glass shadow-sm p-3 h-100 fade-in">
+            <div class="fs-1 text-primary"><i class="bi bi-grid-1x2-fill"></i></div>
+            <h4 class="mt-3">Modern Dashboards</h4>
+            <p class="text-muted">Clean and powerful dashboards for Principal, Teacher, and Student roles.</p>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card card-glass shadow-sm p-3 h-100 fade-in">
+            <div class="fs-1 text-success"><i class="bi bi-person-check-fill"></i></div>
+            <h4 class="mt-3">Role-Based Access</h4>
+            <p class="text-muted">Secure login with advanced permission system for each role.</p>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card card-glass shadow-sm p-3 h-100 fade-in">
+            <div class="fs-1 text-warning"><i class="bi bi-bar-chart-fill"></i></div>
+            <h4 class="mt-3">Exam & Result Management</h4>
+            <p class="text-muted">Teacher mark entry, principal approval, and student result pages.</p>
+        </div>
+    </div>
 </div>
 {% endblock %}

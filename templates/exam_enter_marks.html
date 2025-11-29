@@ -1,21 +1,19 @@
 {% extends "base.html" %}
 {% block title %}Enter Marks — {{ exam.name }}{% endblock %}
 {% block content %}
-<div class="card p-3 shadow-sm">
-  <div class="d-flex justify-content-between">
-    <h4>Enter Marks — {{ exam.name }}</h4>
-    <a class="back-btn" href="{{ url_for('teacher_dashboard') }}">Back</a>
-  </div>
+<div class="card card-glass p-3 shadow-sm">
+  <a class="back-btn" href="{{ url_for('teacher_dashboard') }}">Back</a>
+  <h4 class="mb-3">Enter Marks — {{ exam.name }}</h4>
 
   {% if subjects %}
-    <form method="post" class="mt-3">
+    <form method="post">
       <label class="form-label">Select Subject</label>
-      <select name="subject_name" class="form-select" required>
+      <select name="subject_name" class="form-control" required>
         <option value="">-- select --</option>
         {% for s in subjects %}<option value="{{ s.name }}">{{ s.name }}</option>{% endfor %}
       </select>
 
-      <h6 class="mt-3">Students</h6>
+      <h5 class="mt-3">Students</h5>
       <div class="table-responsive">
         <table class="table">
           <thead><tr><th>Student</th><th>Marks</th></tr></thead>
@@ -35,7 +33,7 @@
       </div>
     </form>
   {% else %}
-    <div class="alert alert-warning">No approved subjects assigned to you. Ask principal to approve your proposed subjects.</div>
+    <p class="text-muted">No approved subjects assigned to you. Ask principal to approve your proposed subjects.</p>
   {% endif %}
 </div>
 {% endblock %}

@@ -285,11 +285,12 @@ def teacher_change_password():
     return render_template('teacher_change_password.html')
 
 # ------------------- Logout -------------------
-@app.route('/logout')
+@app.route("/logout")
 def logout():
     session.clear()
-    flash("Logged out.", "success")
-    return redirect(url_for('home'))
+    flash("Logged out successfully.", "success")
+    return redirect(url_for("login_choice"))
+
 
 # ------------------- Principal Dashboard -------------------
 @app.route('/principal/dashboard')
@@ -341,6 +342,42 @@ def teacher_dashboard():
         subjects = fetchall("SELECT s.* FROM subjects s JOIN teacher_subjects ts ON ts.subject_id=s.id WHERE ts.teacher_id=%s AND ts.principal_id=%s", (teacher['id'], teacher['principal_id']))
         new_exams = fetchall("SELECT * FROM exams WHERE principal_id=%s ORDER BY created_at DESC", (teacher['principal_id'],))
     return render_template('teacher_dashboard.html', teacher=teacher, students=students, subjects=subjects, new_exams=new_exams)
+
+
+# Teacher view: see marks for a specific student
+@app.route("/teacher/student/<int:student_id>/marks")
+@login_required
+def student_marks(student_id):
+
+    # Fetch student
+    student = fetchone("""
+        SELECT *
+        FROM students
+        WHERE id=%s
+    """, (student_id,))
+
+    if not student:
+        flash("Student not found.", "danger")
+        return redirect(url_for('teacher_dashboard'))
+
+    # Fetch marks WITHOUT subject (subject not stored in your DB)
+    marks = fetchall("""
+        SELECT 
+            ex.name AS exam_name,
+            ex.max_marks,
+            em.marks
+        FROM exam_marks em
+        JOIN exams ex ON ex.id = em.exam_id
+        WHERE em.student_id=%s
+          AND em.status='Approved'
+        ORDER BY ex.id DESC
+    """, (student_id,))
+
+    return render_template("teacher_student_marks.html",
+                           student=student,
+                           marks=marks)
+
+
 
 # ------------------- Teachers CRUD (Principal) -------------------
 @app.route('/teachers')
@@ -763,9 +800,12 @@ def student_result():
 
 
 @app.route("/subjects/delete/<int:id>", methods=["POST"])
+@login_required
+@role_required('Principal')
 def delete_subject(id):
     execute("DELETE FROM subjects WHERE id=%s", (id,))
-    return redirect(url_for("subjects_list"))
+    flash("Subject deleted.", "success")
+    return redirect(url_for('subjects_list'))
 
 
 

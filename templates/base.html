@@ -15,48 +15,108 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
   <style>
-    /* small inline helpers for animations if needed */
-    .fade-in { animation: fadeIn 320ms ease both; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    /* Fade animation */
+    .fade-in { animation: fadeIn 0.35s ease both; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    /* Hover glow for navbar buttons */
+    .lux-nav-btn:hover {
+      box-shadow: 0 4px 14px rgba(0, 123, 255, 0.25);
+      transform: translateY(-2px);
+    }
+
+    /* Brand bubble */
+    .brand-bubble {
+      background: #004aad;
+      padding: 8px 10px;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 1.2rem;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    }
+
+    /* Page body */
+    body.lux-body {
+      background: #f3f6fb;
+      scroll-behavior: smooth;
+    }
+
   </style>
 </head>
+
 <body class="lux-body">
 
-  <!-- Top nav -->
-  <nav class="navbar navbar-expand-lg shadow-sm bg-white py-2">
+  <!-- PREMIUM NAVBAR -->
+  <nav class="navbar navbar-expand-lg bg-white shadow-sm py-2 sticky-top fade-in">
     <div class="container">
+
+      <!-- Brand -->
       <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('home') }}">
         <span class="brand-bubble"><i class="bi bi-mortarboard-fill"></i></span>
-        <span class="fw-bold">School SMS</span>
-        <small class="text-muted ms-2">Premium</small>
+        <span class="fw-bold text-primary">School SMS</span>
+        <small class="text-muted ms-1">Premium</small>
       </a>
 
-      <div class="d-flex align-items-center ms-auto gap-2">
-        {% if session.get('role') == 'Principal' %}
-          <a class="btn btn-outline-primary btn-sm" href="{{ url_for('principal_dashboard') }}">Dashboard</a>
-        {% elif session.get('role') == 'Teacher' %}
-          <a class="btn btn-outline-primary btn-sm" href="{{ url_for('teacher_dashboard') }}">Dashboard</a>
-        {% elif session.get('student_id') %}
-          <a class="btn btn-outline-primary btn-sm" href="{{ url_for('student_dashboard') }}">My Dashboard</a>
-        {% endif %}
+      <!-- Mobile toggle -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-        {% if session.get('user_id') or session.get('student_id') %}
-          <span class="ms-2 text-muted d-none d-md-inline">{{ session.get('name') }}</span>
-          <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm ms-2">Logout</a>
-        {% else %}
-          <a href="{{ url_for('login_choice') }}" class="btn btn-primary btn-sm">Login</a>
-        {% endif %}
+      <!-- Menu -->
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto align-items-center gap-2">
+
+          <!-- Principal Dashboard -->
+          {% if session.get('role') == 'Principal' %}
+            <li class="nav-item">
+              <a class="btn btn-outline-primary btn-sm lux-nav-btn" href="{{ url_for('principal_dashboard') }}">Dashboard</a>
+            </li>
+
+          <!-- Teacher Dashboard -->
+          {% elif session.get('role') == 'Teacher' %}
+            <li class="nav-item">
+              <a class="btn btn-outline-primary btn-sm lux-nav-btn" href="{{ url_for('teacher_dashboard') }}">Dashboard</a>
+            </li>
+
+          <!-- Student Dashboard -->
+          {% elif session.get('student_id') %}
+            <li class="nav-item">
+              <a class="btn btn-outline-primary btn-sm lux-nav-btn" href="{{ url_for('student_dashboard') }}">My Dashboard</a>
+            </li>
+          {% endif %}
+
+          <!-- Logout -->
+          {% if session.get('user_id') or session.get('student_id') %}
+            <li class="nav-item d-none d-md-block text-muted small px-2">
+              {{ session.get('name') }}
+            </li>
+            <li class="nav-item">
+              <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm lux-nav-btn">Logout</a>
+            </li>
+
+          <!-- If not logged in -->
+          {% else %}
+            <li class="nav-item">
+              <a href="{{ url_for('login_choice') }}" class="btn btn-primary btn-sm lux-nav-btn">Login</a>
+            </li>
+          {% endif %}
+
+        </ul>
       </div>
+
     </div>
   </nav>
 
-  <!-- Flash -->
+  <!-- FLASH MESSAGES -->
   <div class="container py-3">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
-        <div class="d-grid gap-2">
+        <div class="d-grid gap-2 fade-in">
           {% for cat, msg in messages %}
-            <div class="alert alert-{{ 'danger' if cat=='danger' else ('success' if cat=='success' else cat) }} shadow-sm fade-in">
+            <div class="alert alert-{{ 'danger' if cat=='danger' else ('success' if cat=='success' else cat) }} shadow-sm">
               {{ msg }}
             </div>
           {% endfor %}
@@ -65,14 +125,14 @@
     {% endwith %}
   </div>
 
-  <!-- Content -->
-  <main class="container pb-5">
+  <!-- MAIN CONTENT -->
+  <main class="container py-3 fade-in">
     {% block content %}{% endblock %}
   </main>
 
-  <!-- Footer -->
-  <footer class="text-center text-muted py-4 small mt-5">
-    &copy; {{ 2025 }} School SMS — Premium • Built with care
+  <!-- FOOTER -->
+  <footer class="text-center text-muted py-4 small mt-5 fade-in">
+    &copy; {{ 2025 }} School SMS — Premium UI Edition
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
