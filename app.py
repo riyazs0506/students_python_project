@@ -7,10 +7,18 @@ DB_HOST, DB_USER, DB_PASSWORD, DB_NAME
 """
 
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
+from flask import send_file
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, make_response, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 from functools import wraps
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import cm
+from xhtml2pdf import pisa
+import hashlib
+hashlib.md5 = hashlib.md5  # override fix (safe)
+from flask import make_response
 
 # ---------- CONFIG ----------
 DB_HOST = os.environ.get("DB_HOST", "localhost")
@@ -37,29 +45,48 @@ def fetchall(query, params=()):
     conn = get_connection()
     cur = conn.cursor(dictionary=True)
     cur.execute(query, params)
-    rows = cur.fetchall()
+    rows = cur.fetchall()      # consume all
     cur.close()
     conn.close()
     return rows
+
 
 def fetchone(query, params=()):
     conn = get_connection()
     cur = conn.cursor(dictionary=True)
     cur.execute(query, params)
     row = cur.fetchone()
+
+    # FIX: Consume remaining unread results
+    try:
+        while cur.nextset():
+            pass
+    except:
+        pass
+
     cur.close()
     conn.close()
     return row
+
 
 def execute(query, params=()):
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(query, params)
+
+    # FIX: consume extra result sets if any
+    try:
+        while cur.nextset():
+            pass
+    except:
+        pass
+
     conn.commit()
     lastid = cur.lastrowid
     cur.close()
     conn.close()
     return lastid
+
 
 # ---------- SCHEMA ENSURE ----------
 def ensure_schema():
@@ -376,6 +403,14 @@ def student_marks(student_id):
     return render_template("teacher_student_marks.html",
                            student=student,
                            marks=marks)
+
+
+# ================================
+# SUBJECTS MODULE (WORKING CLEAN)
+# ================================
+# ==========================================
+# STUDENTS MODULE (FINAL — NO DUPLICATES)
+# ==========================================
 
 
 
@@ -702,16 +737,78 @@ def exam_pending_approval(exam_id):
 
 @app.route('/exam/approve/<int:mark_id>', methods=['POST'])
 def exam_approve_mark(mark_id):
+    # Require principal
     if session.get('role') != 'Principal':
         flash("Access denied.", "danger")
         return redirect(url_for('home'))
-    row = fetchone("SELECT em.* FROM exam_marks em JOIN exams ex ON em.exam_id=ex.id WHERE em.id=%s AND ex.principal_id=%s", (mark_id, session['user_id']))
-    if not row:
+
+    # Confirm the mark exists and belongs to this principal's exam
+    row = fetchone(
+        "SELECT em.*, ex.principal_id FROM exam_marks em JOIN exams ex ON em.exam_id=ex.id WHERE em.id=%s",
+        (mark_id,)
+    )
+    if not row or row.get('principal_id') != session['user_id']:
         flash("Not found or permission denied.", "danger")
         return redirect(url_for('principal_dashboard'))
+
+    # 1) Approve this mark row
     execute("UPDATE exam_marks SET status='Approved' WHERE id=%s", (mark_id,))
-    flash("Mark approved.", "success")
+
+    # 2) Recompute totals for (student_id, exam_id) using only APPROVED marks
+    student_id = row['student_id']
+    exam_id = row['exam_id']
+
+    total_row = fetchone("""
+        SELECT SUM(marks) AS total, COUNT(*) AS subjects
+        FROM exam_marks
+        WHERE student_id=%s AND exam_id=%s AND status='Approved'
+    """, (student_id, exam_id))
+
+    total = int(total_row['total'] or 0)
+    subjects = int(total_row['subjects'] or 0)
+
+    # Get max_marks per subject from exams table
+    exam_row = fetchone("SELECT max_marks FROM exams WHERE id=%s", (exam_id,))
+    max_per_subject = int(exam_row['max_marks'] or 0)
+    max_total = subjects * max_per_subject if subjects else 0
+
+    # 3) compute percentage and grade
+    percentage = (total / max_total * 100) if max_total else 0.0
+
+    if percentage >= 90:
+        grade = "A+"
+    elif percentage >= 80:
+        grade = "A"
+    elif percentage >= 70:
+        grade = "B+"
+    elif percentage >= 60:
+        grade = "B"
+    elif percentage >= 50:
+        grade = "C"
+    elif percentage >= 40:
+        grade = "D"
+    else:
+        grade = "F"
+
+    # 4) Save final result into exam_results (insert or update)
+    # Try INSERT ... ON DUPLICATE KEY UPDATE (works in MySQL)
+    try:
+        execute("""
+            INSERT INTO exam_results (student_id, exam_id, total_marks, percentage, grade)
+            VALUES (%s, %s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE total_marks=%s, percentage=%s, grade=%s, created_at=CURRENT_TIMESTAMP
+        """, (student_id, exam_id, total, percentage, grade, total, percentage, grade))
+    except Exception:
+        # If ON DUPLICATE KEY not available for some reason, fallback to check-then-insert/update:
+        exists = fetchone("SELECT id FROM exam_results WHERE student_id=%s AND exam_id=%s", (student_id, exam_id))
+        if exists:
+            execute("UPDATE exam_results SET total_marks=%s, percentage=%s, grade=%s, created_at=CURRENT_TIMESTAMP WHERE id=%s", (total, percentage, grade, exists['id']))
+        else:
+            execute("INSERT INTO exam_results (student_id, exam_id, total_marks, percentage, grade) VALUES (%s,%s,%s,%s,%s)", (student_id, exam_id, total, percentage, grade))
+
+    flash("Mark approved and student result updated.", "success")
     return redirect(request.referrer or url_for('principal_dashboard'))
+
 
 @app.route('/exam/reject/<int:mark_id>', methods=['POST'])
 def exam_reject_mark(mark_id):
@@ -757,46 +854,142 @@ def student_result():
 
     sid = session['student_id']
 
-    rows = fetchall("""
-        SELECT em.*, ex.name AS exam_name, ex.max_marks 
-        FROM exam_marks em
-        JOIN exams ex ON em.exam_id = ex.id
-        WHERE em.student_id = %s AND em.status = 'Approved'
-        ORDER BY ex.created_at DESC, em.subject_name
+    # Fetch one UNVIEWED result (latest first)
+    result = fetchone("""
+        SELECT er.*, ex.name AS exam_name, ex.max_marks
+        FROM exam_results er
+        JOIN exams ex ON er.exam_id = ex.id
+        WHERE er.student_id=%s AND er.viewed_at IS NULL
+        ORDER BY er.created_at DESC
+        LIMIT 1
     """, (sid,))
 
-    exams = {}
-    for r in rows:
-        eid = r['exam_id']
-        if eid not in exams:
-            exams[eid] = {
-                'exam_name': r['exam_name'],
-                'max_marks': r['max_marks'],
-                'items': [],
-                'total': 0
-            }
-        exams[eid]['items'].append({'subject': r['subject_name'], 'marks': r['marks']})
-        exams[eid]['total'] += r['marks']
+    # Fetch previous viewed results
+    previous = fetchall("""
+        SELECT er.*, ex.name AS exam_name, ex.max_marks
+        FROM exam_results er
+        JOIN exams ex ON er.exam_id = ex.id
+        WHERE er.student_id=%s AND er.viewed_at IS NOT NULL
+        ORDER BY er.created_at DESC
+    """, (sid,))
 
-    exam_list = []
-    for eid, info in exams.items():
-        exam_list.append({
-            'exam_id': eid,
-            'exam_name': info['exam_name'],
-            'max_marks': info['max_marks'],
-            'items': info['items'],
-            'total': info['total']
-        })
-
-    student = fetchone("SELECT * FROM students WHERE id=%s", (sid,))
+    # Mark current result as viewed once opened
+    if result:
+        execute("UPDATE exam_results SET viewed_at = NOW() WHERE id=%s", (result['id'],))
 
     return render_template(
         'student_result.html',
-        student=student,
-        exams=exam_list,
-        grade_from_total=grade_from_total,
-        mark_color_class=mark_color_class     # ✅ FIXED
+        result=result,
+        previous=previous
     )
+
+
+@app.route('/student/result/<int:exam_id>')
+def student_result_details(exam_id):
+    if 'student_id' not in session:
+        flash("Please login as student.", "danger")
+        return redirect(url_for('student_login'))
+
+    sid = session['student_id']
+
+    # Fetch exam info
+    exam = fetchone("SELECT * FROM exams WHERE id=%s", (exam_id,))
+    if not exam:
+        flash("Exam not found.", "danger")
+        return redirect(url_for('student_dashboard'))
+
+    # Fetch final overall result (summary)
+    final = fetchone("""
+        SELECT er.*, ex.name AS exam_name, ex.max_marks
+        FROM exam_results er
+        JOIN exams ex ON ex.id = er.exam_id
+        WHERE er.student_id=%s AND er.exam_id=%s
+        LIMIT 1
+    """, (sid, exam_id))
+
+    if not final:
+        flash("No result found for this exam.", "warning")
+        return redirect(url_for('student_dashboard'))
+
+    # Fetch subject-wise approved marks
+    items = fetchall("""
+        SELECT subject_name, marks
+        FROM exam_marks
+        WHERE student_id=%s AND exam_id=%s AND status='Approved'
+        ORDER BY subject_name
+    """, (sid, exam_id))
+
+    return render_template(
+        'student_result_details.html',
+        exam=exam,        # ✅ FIXED
+        final=final,      # Summary
+        items=items       # Subject-wise marks
+    )
+
+@app.route('/student/result/<int:exam_id>/pdf')
+def student_result_pdf(exam_id):
+    if 'student_id' not in session:
+        flash("Please login as student.", "danger")
+        return redirect(url_for('student_login'))
+
+    sid = session['student_id']
+
+    # Fetch exam
+    exam = fetchone("SELECT * FROM exams WHERE id=%s", (exam_id,))
+    if not exam:
+        flash("Exam not found.", "danger")
+        return redirect(url_for('student_dashboard'))
+
+    # Final summary
+    final = fetchone("""
+        SELECT er.*, ex.name AS exam_name, ex.max_marks
+        FROM exam_results er
+        JOIN exams ex ON ex.id = er.exam_id
+        WHERE er.student_id=%s AND er.exam_id=%s
+        LIMIT 1
+    """, (sid, exam_id))
+
+    # Subject marks
+    items = fetchall("""
+        SELECT subject_name, marks
+        FROM exam_marks
+        WHERE student_id=%s AND exam_id=%s AND status='Approved'
+        ORDER BY subject_name
+    """, (sid, exam_id))
+
+    # Student
+    student = fetchone("SELECT * FROM students WHERE id=%s", (sid,))
+
+    # Render HTML to PDF
+    html = render_template(
+        "pdf_result.html",
+        exam=exam,
+        student=student,
+        marks=items,
+        final=final
+    )
+
+    # PDF Response
+    from io import BytesIO
+    pdf_buffer = BytesIO()
+
+    pisa_status = pisa.CreatePDF(
+        html,
+        dest=pdf_buffer
+    )
+
+    if pisa_status.err:
+        return "PDF generation failed", 500
+
+    pdf_buffer.seek(0)
+
+    return send_file(
+        pdf_buffer,
+        as_attachment=True,
+        download_name=f"Marksheet_{student['name']}_{final['exam_name']}.pdf",
+        mimetype="application/pdf"
+    )
+
 
 
 @app.route("/subjects/delete/<int:id>", methods=["POST"])

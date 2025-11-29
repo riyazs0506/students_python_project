@@ -262,3 +262,232 @@ body.lux-body {
         display: none;
     }
 }
+
+/* ============================================================
+   DARK MODE — Premium
+===============================================================*/
+html.dark body {
+    background: #0f1217 !important;
+    color: #e5e7eb !important;
+}
+
+html.dark .navbar {
+    background: rgba(25, 28, 35, 0.85) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+html.dark .brand-bubble {
+    background: #0a84ff;
+}
+
+html.dark .card,
+html.dark .card-glass {
+    background: rgba(32, 36, 43, 0.85) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: #e5e7eb !important;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.6) !important;
+}
+
+html.dark .form-control {
+    background: rgba(40, 44, 52, 0.9) !important;
+    color: white !important;
+    border: 1px solid rgba(255,255,255,0.12) !important;
+}
+
+html.dark .form-control:focus {
+    box-shadow: 0 0 0 3px rgba(10,132,255,0.4) !important;
+}
+
+html.dark .table {
+    color: #e5e7eb !important;
+}
+
+html.dark .table tbody tr:hover {
+    background: rgba(10,132,255,0.12) !important;
+}
+
+html.dark .table thead {
+    background: #0a84ff !important;
+}
+
+html.dark .btn-outline-primary {
+    color: #0a84ff !important;
+    border-color: #0a84ff !important;
+}
+
+html.dark .btn-outline-primary:hover {
+    background: #0a84ff !important;
+    color: white !important;
+}
+
+html.dark .alert {
+    background: rgba(55,59,68,0.8) !important;
+    border-color: rgba(255,255,255,0.12) !important;
+    color: #e5e7eb !important;
+}
+
+/* ============================================================
+   Floating Action Button (FAB)
+===============================================================*/
+.fab-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 999;
+}
+
+.fab-main {
+    background: #0069ff;
+    color: white;
+    border: none;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 28px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+}
+
+.fab-main:hover {
+    background: #0052cc;
+    transform: rotate(90deg);
+}
+
+.fab-options {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    bottom: 75px;
+    right: 0;
+    gap: 12px;
+}
+
+.fab-options a {
+    background: white;
+    padding: 10px 16px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fab-options a:hover {
+    background: #eef3ff;
+}
+
+/* Dark mode FAB */
+html.dark .fab-options a {
+    background: rgba(32,36,43,0.9);
+    color: white;
+}
+
+/* ===== Dark-mode compatibility fallback (add at end of style.css) ===== */
+
+/* If your main dark rules target `html.dark ...` they will work.
+   Add these body-based fallbacks to cover both cases. */
+
+body.dark {
+  background: #0f1217 !important;
+  color: #e5e7eb !important;
+}
+
+body.dark .navbar {
+  background: rgba(25, 28, 35, 0.95) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+body.dark .card,
+body.dark .card-glass {
+  background: rgba(32,36,43,0.92) !important;
+  color: #e5e7eb !important;
+}
+
+body.dark .form-control {
+  background: rgba(40,44,52,0.9) !important;
+  color: #e5e7eb !important;
+  border-color: rgba(255,255,255,0.08) !important;
+}
+
+body.dark .table thead {
+  background: #0a84ff !important;
+  color: white !important;
+}
+
+body.dark .table tbody tr:hover {
+  background: rgba(10,132,255,0.10) !important;
+}
+
+body.dark .btn-outline-primary {
+  color: #0a84ff !important;
+  border-color: #0a84ff !important;
+}
+
+
+/* ========= GLOBAL PREMIUM UI ========= */
+
+body.lux-body {
+    background: #f3f6fb;
+    transition: background 0.3s, color 0.3s;
+}
+
+/* Dark mode */
+html.dark body.lux-body {
+    background: #0d1117;
+    color: #e6edf3;
+}
+
+/* Glass card */
+.card-glass {
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(6px);
+    border-radius: 14px;
+    transition: 0.3s;
+}
+
+html.dark .card-glass {
+    background: rgba(22,27,34,0.72);
+}
+
+/* Buttons */
+.lux-nav-btn {
+    transition: 0.2s;
+    border-radius: 50px;
+}
+
+.lux-nav-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+/* Tables */
+table.table-hover tbody tr:hover {
+    background: rgba(0, 123, 255, 0.05);
+}
+
+html.dark table.table-hover tbody tr:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+/* FAB styling */
+.fab-container a {
+    display: block;
+    background: #ffffff;
+    padding: 10px 14px;
+    border-radius: 8px;
+    color: #333;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+html.dark .fab-container a {
+    background: #161b22;
+    color: #e6edf3;
+}
+
+/* Form fields */
+input, select {
+    border-radius: 8px !important;
+}

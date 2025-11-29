@@ -15,89 +15,70 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
   <style>
-    /* Fade animation */
     .fade-in { animation: fadeIn 0.35s ease both; }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: none; }
-    }
-
-    /* Hover glow for navbar buttons */
-    .lux-nav-btn:hover {
-      box-shadow: 0 4px 14px rgba(0, 123, 255, 0.25);
-      transform: translateY(-2px);
-    }
-
-    /* Brand bubble */
-    .brand-bubble {
-      background: #004aad;
-      padding: 8px 10px;
-      border-radius: 50%;
-      color: #fff;
-      font-size: 1.2rem;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-    }
-
-    /* Page body */
-    body.lux-body {
-      background: #f3f6fb;
-      scroll-behavior: smooth;
-    }
-
+    @keyframes fadeIn { from { opacity:0; transform:translateY(6px);} to {opacity:1;transform:none;} }
+    .lux-nav-btn:hover { box-shadow: 0 4px 14px rgba(0,123,255,0.12); transform: translateY(-2px); }
+    .fab-container { position:fixed; bottom:30px; right:30px; z-index:1400; }
+    .fab-main { width:60px; height:60px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:22px; }
+    .fab-options { display:none; flex-direction:column; position:absolute; bottom:75px; right:0; gap:12px; }
   </style>
 </head>
 
 <body class="lux-body">
 
-  <!-- PREMIUM NAVBAR -->
+  <!-- NAVBAR -->
   <nav class="navbar navbar-expand-lg bg-white shadow-sm py-2 sticky-top fade-in">
     <div class="container">
 
-      <!-- Brand -->
       <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('home') }}">
         <span class="brand-bubble"><i class="bi bi-mortarboard-fill"></i></span>
         <span class="fw-bold text-primary">School SMS</span>
         <small class="text-muted ms-1">Premium</small>
       </a>
 
-      <!-- Mobile toggle -->
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <!-- Menu -->
       <div class="collapse navbar-collapse" id="mainNav">
         <ul class="navbar-nav ms-auto align-items-center gap-2">
 
-          <!-- Principal Dashboard -->
           {% if session.get('role') == 'Principal' %}
             <li class="nav-item">
               <a class="btn btn-outline-primary btn-sm lux-nav-btn" href="{{ url_for('principal_dashboard') }}">Dashboard</a>
             </li>
 
-          <!-- Teacher Dashboard -->
           {% elif session.get('role') == 'Teacher' %}
             <li class="nav-item">
               <a class="btn btn-outline-primary btn-sm lux-nav-btn" href="{{ url_for('teacher_dashboard') }}">Dashboard</a>
             </li>
 
-          <!-- Student Dashboard -->
           {% elif session.get('student_id') %}
             <li class="nav-item">
               <a class="btn btn-outline-primary btn-sm lux-nav-btn" href="{{ url_for('student_dashboard') }}">My Dashboard</a>
             </li>
           {% endif %}
 
-          <!-- Logout -->
-          {% if session.get('user_id') or session.get('student_id') %}
-            <li class="nav-item d-none d-md-block text-muted small px-2">
-              {{ session.get('name') }}
+          {% if session.get('role') == 'Teacher' %}
+            <li class="nav-item">
+              <a class="btn btn-outline-success btn-sm lux-nav-btn" href="{{ url_for('teacher_profile') }}">
+                <i class="bi bi-person-circle"></i>
+              </a>
             </li>
+          {% endif %}
+
+          <!-- Dark mode toggle -->
+          <li class="nav-item">
+            <button id="themeToggle" class="btn btn-outline-secondary btn-sm lux-nav-btn">
+              <i id="themeIcon" class="bi bi-moon-stars"></i>
+            </button>
+          </li>
+
+          {% if session.get('user_id') or session.get('student_id') %}
+            <li class="nav-item d-none d-md-block text-muted small px-2">{{ session.get('name') }}</li>
             <li class="nav-item">
               <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm lux-nav-btn">Logout</a>
             </li>
-
-          <!-- If not logged in -->
           {% else %}
             <li class="nav-item">
               <a href="{{ url_for('login_choice') }}" class="btn btn-primary btn-sm lux-nav-btn">Login</a>
@@ -110,7 +91,7 @@
     </div>
   </nav>
 
-  <!-- FLASH MESSAGES -->
+  <!-- FLASH -->
   <div class="container py-3">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
@@ -125,7 +106,7 @@
     {% endwith %}
   </div>
 
-  <!-- MAIN CONTENT -->
+  <!-- CONTENT -->
   <main class="container py-3 fade-in">
     {% block content %}{% endblock %}
   </main>
@@ -135,6 +116,129 @@
     &copy; {{ 2025 }} School SMS — Premium UI Edition
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- FAB (Only for Principal & Teacher) -->
+  {% if session.get('role') in ['Principal','Teacher'] %}
+  <div class="fab-container" id="fabContainer">
+    <button class="fab-main btn btn-primary shadow" id="fabMain">
+      <i class="bi bi-plus-lg"></i>
+    </button>
+
+    <div class="fab-options" id="fabOptions">
+      <a class="shadow-sm" href="{{ url_for('add_student') }}"><i class="bi bi-person-plus"></i> Student</a>
+      <a class="shadow-sm" href="{{ url_for('add_teacher') }}"><i class="bi bi-person-workspace"></i> Teacher</a>
+      <a class="shadow-sm" href="{{ url_for('add_subject') }}"><i class="bi bi-journal-plus"></i> Subject</a>
+
+      <!-- FIXED: using working route exam_list -->
+      <a class="shadow-sm" href="{{ url_for('exam_list') }}"><i class="bi bi-clipboard2-plus"></i> Exam</a>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Scripts -->
+  <script>
+/* ===== Robust Dark Mode + FAB script =====
+   - Applies 'dark' to BOTH <html> and <body> for compatibility
+   - Uses localStorage ('theme' = 'dark'|'light')
+   - Falls back to system preference when no stored choice exists
+   - Logs status to console for debug
+*/
+
+(function() {
+  const root = document.documentElement;      // <html>
+  const body = document.body;                 // <body>
+  const toggle = document.getElementById('themeToggle');
+  const icon = document.getElementById('themeIcon');
+
+  // apply/remove class on both elements
+  function setDark(on) {
+    if (on) { root.classList.add('dark'); body.classList.add('dark'); }
+    else    { root.classList.remove('dark'); body.classList.remove('dark'); }
+    updateIcon();
+  }
+
+  function updateIcon() {
+    if (!icon) return;
+    icon.className = (root.classList.contains('dark') ? 'bi bi-sun-fill' : 'bi bi-moon-stars');
+  }
+
+  // Read saved theme from localStorage
+  const stored = localStorage.getItem('theme'); // 'dark'|'light'|null
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  if (stored === 'dark' || (!stored && prefersDark)) {
+    setDark(true);
+    console.info('[Theme] dark mode enabled (applied)');
+  } else {
+    setDark(false);
+    console.info('[Theme] light mode enabled (applied)');
+  }
+
+  // Toggle button
+  if (toggle) {
+    toggle.addEventListener('click', function(e) {
+      const nowDark = !root.classList.contains('dark');
+      setDark(nowDark);
+      localStorage.setItem('theme', nowDark ? 'dark' : 'light');
+      console.info('[Theme] user toggled, now:', nowDark ? 'dark' : 'light');
+    });
+  }
+
+  // If user hasn't chosen, adapt to system changes
+  if (window.matchMedia) {
+    const mm = window.matchMedia('(prefers-color-scheme: dark)');
+    mm.addEventListener('change', (ev) => {
+      if (!localStorage.getItem('theme')) {
+        setDark(ev.matches);
+        console.info('[Theme] system preference changed, applied:', ev.matches ? 'dark' : 'light');
+      }
+    });
+  }
+
+  // ===== FAB (keep previous behavior but robust) =====
+  const fabMain = document.getElementById('fabMain');
+  const fabOptions = document.getElementById('fabOptions');
+  const fabContainer = document.getElementById('fabContainer');
+
+  if (fabMain && fabOptions && fabContainer) {
+    // prefer CSS-controlled layout: use class 'open' to animate (if you add CSS)
+    function closeFab() {
+      fabOptions.style.display = 'none';
+      fabOptions.setAttribute('aria-hidden', 'true');
+    }
+    function openFab() {
+      fabOptions.style.display = 'flex';
+      fabOptions.style.flexDirection = 'column';
+      fabOptions.setAttribute('aria-hidden', 'false');
+    }
+
+    fabMain.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const open = fabOptions.style.display === 'flex';
+      if (open) closeFab(); else openFab();
+    });
+
+    // click outside closes
+    document.addEventListener('click', (ev) => {
+      if (!fabContainer.contains(ev.target)) closeFab();
+    });
+
+    // escape closes
+    document.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Escape') closeFab();
+    });
+
+    // responsive: hide on tiny screens
+    function checkFabVisibility() {
+      if (window.innerWidth < 420) fabContainer.style.display = 'none';
+      else fabContainer.style.display = '';
+    }
+    checkFabVisibility();
+    window.addEventListener('resize', checkFabVisibility);
+  }
+
+})();
+</script>
+
+
 </body>
 </html>

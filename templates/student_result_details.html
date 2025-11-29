@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Result — {{ exam.name }}{% endblock %}
+
+{% block content %}
+<div class="card p-3">
+  
+  <a class="back-btn" href="{{ url_for('student_result') }}">Back to results</a>
+
+  <h4 class="mt-2">Result — {{ exam.name }}</h4>
+
+  {% if final %}
+    <p><strong>Total:</strong> 
+        {{ final.total_marks }} / {{ exam.max_marks }}
+    </p>
+
+    <p><strong>Percentage:</strong> 
+        {{ final.percentage|round(2) }}%
+    </p>
+
+    <p><strong>Grade:</strong> 
+        {{ final.grade }}
+    </p>
+
+    <!-- PDF BUTTON (Correct position) -->
+    <a class="btn btn-primary my-3" 
+       href="{{ url_for('student_result_pdf', exam_id=final.exam_id) }}">
+        <i class="bi bi-file-earmark-pdf-fill"></i> Download PDF Marksheet
+    </a>
+  {% endif %}
+
+  <h5 class="mt-3">Subject Marks</h5>
+
+  {% if marks %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Marks</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in marks %}
+          <tr>
+            <td>{{ m.subject_name }}</td>
+            <td>{{ m.marks }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="text-muted">No subject marks available (maybe not approved yet).</p>
+  {% endif %}
+
+</div>
+{% endblock %}

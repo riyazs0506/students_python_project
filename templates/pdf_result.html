@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial; font-size: 14px; }
+        h2 { text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        table, th, td { border: 1px solid #444; }
+        th, td { padding: 8px; text-align: left; }
+        .summary { margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<h2>Marksheet – {{ exam.name }}</h2>
+
+<p><strong>Student:</strong> {{ student.name }}</p>
+<p><strong>Class:</strong> {{ student.class_name }}</p>
+<p><strong>Roll No:</strong> {{ student.roll_no }}</p>
+
+<h3>Subject Marks</h3>
+<table>
+    <thead>
+        <tr><th>Subject</th><th>Marks</th></tr>
+    </thead>
+    <tbody>
+    {% for m in marks %}
+        <tr>
+            <td>{{ m.subject_name }}</td>
+            <td>{{ m.marks }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<div class="summary">
+    <p><strong>Total Marks:</strong> {{ final.total_marks }} / {{ exam.max_marks }}</p>
+    <p><strong>Percentage:</strong> {{ final.percentage }}%</p>
+    <p><strong>Grade:</strong> {{ final.grade }}</p>
+</div>
+
+</body>
+</html>
